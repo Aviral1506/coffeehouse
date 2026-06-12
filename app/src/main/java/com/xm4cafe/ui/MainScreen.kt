@@ -2,6 +2,7 @@
 package com.coffeehouse.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -68,6 +69,7 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .safeDrawingPadding()
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(0.dp),
