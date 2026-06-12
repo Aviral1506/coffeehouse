@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Steam wisps -->
+    <!-- Left steam wisp -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#B388FF"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M 30 20 Q 27 15 30 10 Q 33 15 30 20" />
+
+    <!-- Center-left steam wisp -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#B388FF"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M 43 18 Q 40 13 43 8 Q 46 13 43 18" />
+
+    <!-- Center-right steam wisp -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#B388FF"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M 56 20 Q 53 15 56 10 Q 59 15 56 20" />
+
+    <!-- Right steam wisp -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#B388FF"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M 69 18 Q 66 13 69 8 Q 72 13 69 18" />
+
+    <!-- Mug body -->
+    <path
+        android:fillColor="#0a0a0a"
+        android:strokeColor="#B388FF"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M 25 28 L 25 72 Q 25 80 33 80 L 75 80 Q 83 80 83 72 L 83 28 Z" />
+
+    <!-- Coffee inside the mug -->
+    <path
+        android:fillColor="#7C4DFF"
+        android:pathData="M 27 38 L 27 72 Q 27 78 33 78 L 75 78 Q 81 78 81 72 L 81 38 Z" />
+
+    <!-- Mug handle -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#B388FF"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M 83 40 Q 95 40 95 56 Q 95 72 83 72" />
+
+    <!-- Highlight on mug -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#B388FF"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M 33 33 Q 33 28 40 28" />
+</vector>
