@@ -4,6 +4,8 @@ package com.coffeehouse.service
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Notification
+import android.app.PendingIntent
+import android.app.Service.STOP_FOREGROUND_REMOVE
 import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -46,6 +48,7 @@ class AudioEffectService : LifecycleService() {
 
     private val NOTIFICATION_ID = 1
     private val CHANNEL_ID = "coffeehouse_channel"
+    private val ACTION_TURN_OFF = "com.coffeehouse.action.TURN_OFF"
 
     // ---- Binder for the Phase 4 ViewModel ----
     inner class LocalBinder : Binder() {
@@ -127,6 +130,11 @@ class AudioEffectService : LifecycleService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
 
+        if (intent?.action == ACTION_TURN_OFF) {
+            applyPreset(Preset.OFF)
+            return START_STICKY
+        }
+
         // Step 1 — promote to foreground IMMEDIATELY (Constraints A + B).
         // Must come before any AudioEffect work; ServiceCompat handles the
         // API-level branching internally, so no SDK_INT guard here.
@@ -196,19 +204,59 @@ class AudioEffectService : LifecycleService() {
             .replace('_', ' ')
             .lowercase()
             .replaceFirstChar { it.uppercase() }
+        val isActive = preset != Preset.OFF
+
+        val turnOffIntent = Intent(this, AudioEffectService::class.java).apply {
+            action = ACTION_TURN_OFF
+        }
+        val turnOffPendingIntent = PendingIntent.getService(
+            this,
+            0,
+            turnOffIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Coffeehouse")
-            .setContentText("$pretty — Active")
             .setSmallIcon(android.R.drawable.ic_media_play)
-            .setOngoing(true)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setCategory(NotificationCompat.CATEGORY_SERVICE)
+            .setOngoing(isActive)
+            .setOnlyAlertOnce(true)
+            .setShowWhen(false)
             .setSilent(true)
+            .also { builder ->
+                if (isActive) {
+                    builder
+                        .setContentText("$pretty - Active")
+                        .addAction(
+                            android.R.drawable.ic_media_pause,
+                            "Turn off",
+                            turnOffPendingIntent
+                        )
+                } else {
+                    builder.setContentText("Off")
+                }
+            }
             .build()
     }
 
     private fun updateNotification(preset: Preset) {
-        val nm = getSystemService(NotificationManager::class.java)
-        nm.notify(NOTIFICATION_ID, buildNotification(preset))
+        if (preset == Preset.OFF) {
+            removeForegroundNotification()
+            return
+        }
+        ServiceCompat.startForeground(
+            this,
+            NOTIFICATION_ID,
+            buildNotification(preset),
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
+        )
+    }
+
+    private fun removeForegroundNotification() {
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        getSystemService(NotificationManager::class.java).cancel(NOTIFICATION_ID)
     }
 
     // ---- Helpers ----

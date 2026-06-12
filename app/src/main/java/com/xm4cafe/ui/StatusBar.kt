@@ -16,13 +16,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.coffeehouse.model.Preset
 import com.coffeehouse.viewmodel.UiState
 
 /**
  * Top-of-screen status row (spec §8.1, §8.3).
  *
  * Left: Bluetooth glyph + XM4 device name (or "No headphones").
- * Right: green dot when service is bound, grey dot otherwise.
+ * Right: green "Active" only when the XM4 is actually connected; otherwise
+ * a warmer warning dot calls out that the playback device is missing.
  *
  * The Bluetooth glyph is drawn inline via Canvas rather than imported from
  * material-icons-extended, which is not listed as a project dependency.
@@ -61,19 +63,27 @@ fun StatusBar(uiState: UiState, modifier: Modifier = Modifier) {
             )
         }
 
-        // ---- Right: service status ----
+        // ---- Right: listening status ----
         Row(verticalAlignment = Alignment.CenterVertically) {
-            val dotColor = if (uiState.serviceConnected) {
-                Color(0xFF1A6B3A) // green
-            } else {
-                Color(0xFF888888) // grey
+            val effectsActive = uiState.effectsEnabled && uiState.activePreset != Preset.OFF
+            val statusText = when {
+                !uiState.xm4Connected -> "Device not connected"
+                uiState.serviceConnected && effectsActive -> "Active"
+                uiState.serviceConnected -> "Effects off"
+                else -> "Service off"
+            }
+            val dotColor = when {
+                !uiState.xm4Connected -> Color(0xFFF59E0B)
+                uiState.serviceConnected && effectsActive -> Color(0xFF22C55E)
+                uiState.serviceConnected -> MaterialTheme.colorScheme.primary
+                else -> Color(0xFF888888)
             }
             Canvas(modifier = Modifier.size(10.dp)) {
                 drawCircle(color = dotColor, radius = size.minDimension / 2f)
             }
             Spacer(Modifier.size(6.dp))
             Text(
-                text = if (uiState.serviceConnected) "Active" else "Off",
+                text = statusText,
                 style = MaterialTheme.typography.labelSmall,
             )
         }

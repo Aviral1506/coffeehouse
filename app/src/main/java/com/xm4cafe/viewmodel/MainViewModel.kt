@@ -3,6 +3,7 @@ package com.coffeehouse.viewmodel
 
 import android.app.Application
 import android.bluetooth.BluetoothManager
+import android.bluetooth.BluetoothProfile
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -276,11 +277,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
-     * Pragmatic XM4 detection: list bonded BT devices and report whether any
-     * match the WH-1000XM4 name pattern. bondedDevices does NOT distinguish
-     * "currently connected" from "paired but offline" — Phase 5 will refine
-     * this with a Bluetooth connection-state broadcast receiver. For now,
-     * paired-with-XM4 is treated as connected.
+     * Pragmatic XM4 detection: require an active A2DP connection and a bonded
+     * device whose name matches the WH-1000XM4 pattern. This avoids showing
+     * "Active" just because the headphones were paired in the past.
      *
      * All calls are guarded against SecurityException because the user may
      * have denied BLUETOOTH_CONNECT (Constraint D).
@@ -290,24 +289,35 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             .getSystemService(BluetoothManager::class.java)
         val adapter = btManager?.adapter
         if (adapter == null || !adapter.isEnabled) {
-            _uiState.update { it.copy(xm4Connected = false, xm4DeviceName = "") }
+            val servicePreset = audioService?.getCurrentPreset()
+            _uiState.update {
+                it.copy(
+                    xm4Connected = false,
+                    xm4DeviceName = "",
+                    activePreset = servicePreset ?: it.activePreset,
+                    effectsEnabled = servicePreset?.let { preset -> preset != Preset.OFF }
+                        ?: it.effectsEnabled,
+                )
+            }
             return
         }
         try {
-            // Spec note: getConnectedDevices(BluetoothProfile.HEADSET/A2DP)
-            // requires a BluetoothProfile.ServiceListener round-trip — too
-            // heavy for a 5s poll. bondedDevices is the cheap approximation
-            // documented in the prompt; Phase 5 swaps this for a connection
-            // broadcast receiver.
+            val a2dpConnected =
+                adapter.getProfileConnectionState(BluetoothProfile.A2DP) ==
+                    BluetoothProfile.STATE_CONNECTED
             val xm4 = adapter.bondedDevices
                 ?.firstOrNull { device ->
                     device.name?.contains("WH-1000XM4", ignoreCase = true) == true ||
                     device.name?.contains("WH1000XM4",  ignoreCase = true) == true
                 }
+            val servicePreset = audioService?.getCurrentPreset()
             _uiState.update {
                 it.copy(
-                    xm4Connected  = xm4 != null,
-                    xm4DeviceName = xm4?.name ?: "",
+                    xm4Connected  = a2dpConnected && xm4 != null,
+                    xm4DeviceName = if (a2dpConnected) xm4?.name ?: "" else "",
+                    activePreset = servicePreset ?: it.activePreset,
+                    effectsEnabled = servicePreset?.let { preset -> preset != Preset.OFF }
+                        ?: it.effectsEnabled,
                 )
             }
         } catch (e: SecurityException) {
