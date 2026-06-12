@@ -1,5 +1,5 @@
-// app/src/main/java/com/xm4cafe/ui/PresetSelector.kt
-package com.xm4cafe.ui
+// app/src/main/java/com/coffeehouse/ui/PresetSelector.kt
+package com.coffeehouse.ui
 
 import android.view.HapticFeedbackConstants
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
-import com.xm4cafe.model.Preset
+import com.coffeehouse.model.Preset
 
 /**
  * Four-button segmented control: Cafe / Living Room / My Room / Off (spec §8.1).

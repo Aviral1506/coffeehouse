@@ -1,5 +1,5 @@
-// app/src/main/java/com/xm4cafe/service/AudioEffectService.kt
-package com.xm4cafe.service
+// app/src/main/java/com/coffeehouse/service/AudioEffectService.kt
+package com.coffeehouse.service
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -20,9 +20,9 @@ import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
-import com.xm4cafe.data.SettingsRepositoryImpl
-import com.xm4cafe.model.CafeSettings
-import com.xm4cafe.model.Preset
+import com.coffeehouse.data.SettingsRepositoryImpl
+import com.coffeehouse.model.CafeSettings
+import com.coffeehouse.model.Preset
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -45,7 +45,7 @@ class AudioEffectService : LifecycleService() {
     private lateinit var repository: SettingsRepositoryImpl
 
     private val NOTIFICATION_ID = 1
-    private val CHANNEL_ID = "xm4_cafe_channel"
+    private val CHANNEL_ID = "coffeehouse_channel"
 
     // ---- Binder for the Phase 4 ViewModel ----
     inner class LocalBinder : Binder() {
@@ -146,7 +146,7 @@ class AudioEffectService : LifecycleService() {
             val savedSettings = try {
                 repository.loadSettings()
             } catch (e: Exception) {
-                Log.w("XM4Cafe", "loadSettings failed, using default: ${e.message}")
+                Log.w("Coffeehouse", "loadSettings failed, using default: ${e.message}")
                 currentPreset.toSettings(numBands)
             }
             val savedPresetName = repository.loadActivePresetName()
@@ -157,7 +157,7 @@ class AudioEffectService : LifecycleService() {
             }
             effectsManager.initEffects(savedSettings)
             updateNotification(currentPreset)
-            Log.d("XM4Cafe", "Effects initialised with saved preset: $currentPreset")
+            Log.d("Coffeehouse", "Effects initialised with saved preset: $currentPreset")
         }
 
         // Step 3 — sticky so the system tries to revive us if killed.
@@ -184,7 +184,7 @@ class AudioEffectService : LifecycleService() {
     private fun createNotificationChannel() {
         val channel = NotificationChannel(
             CHANNEL_ID,
-            "XM4 Cafe Mode",
+            "Coffeehouse",
             NotificationManager.IMPORTANCE_LOW
         )
         val nm = getSystemService(NotificationManager::class.java)
@@ -198,7 +198,7 @@ class AudioEffectService : LifecycleService() {
             .replaceFirstChar { it.uppercase() }
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("XM4 Cafe Mode")
+            .setContentTitle("Coffeehouse")
             .setContentText("$pretty — Active")
             .setSmallIcon(android.R.drawable.ic_media_play)
             .setOngoing(true)
@@ -227,7 +227,7 @@ class AudioEffectService : LifecycleService() {
                 n
             }
         } catch (e: RuntimeException) {
-            Log.w("XM4Cafe", "getNumBands fallback to 5: ${e.message}")
+            Log.w("Coffeehouse", "getNumBands fallback to 5: ${e.message}")
             5
         }
     }
@@ -240,11 +240,11 @@ class AudioEffectService : LifecycleService() {
             when (intent.action) {
                 AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION -> {
                     val sessionId = intent.getIntExtra(AudioEffect.EXTRA_AUDIO_SESSION, -1)
-                    Log.d("XM4Cafe", "Audio session opened: $sessionId")
+                    Log.d("Coffeehouse", "Audio session opened: $sessionId")
                 }
                 AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION -> {
                     val sessionId = intent.getIntExtra(AudioEffect.EXTRA_AUDIO_SESSION, -1)
-                    Log.d("XM4Cafe", "Audio session closed: $sessionId")
+                    Log.d("Coffeehouse", "Audio session closed: $sessionId")
                 }
             }
         }
@@ -262,17 +262,17 @@ class AudioEffectService : LifecycleService() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
                 BluetoothDevice.ACTION_ACL_CONNECTED -> {
-                    Log.d("XM4Cafe", "Bluetooth connected — re-applying effects in 1500ms")
+                    Log.d("Coffeehouse", "Bluetooth connected — re-applying effects in 1500ms")
                     lifecycleScope.launch {
                         delay(1500)          // Wait for A2DP route to activate
                         val numBands = getNumBands()
                         val settings = currentPreset.toSettings(numBands)
                         effectsManager.applySettings(settings)
-                        Log.d("XM4Cafe", "Effects re-applied after reconnect")
+                        Log.d("Coffeehouse", "Effects re-applied after reconnect")
                     }
                 }
                 BluetoothDevice.ACTION_ACL_DISCONNECTED -> {
-                    Log.d("XM4Cafe", "Bluetooth disconnected")
+                    Log.d("Coffeehouse", "Bluetooth disconnected")
                     // Do not release effects — they re-attach on reconnect.
                 }
             }

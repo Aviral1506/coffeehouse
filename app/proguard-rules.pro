@@ -6,7 +6,7 @@
 # workers), causing silent runtime failures on the release APK.
 
 # Keep all app classes — prevents R8 from renaming service/receiver
--keep class com.xm4cafe.** { *; }
+-keep class com.coffeehouse.** { *; }
 
 # Keep AudioEffect subclasses used by name at runtime
 -keep class android.media.audiofx.** { *; }

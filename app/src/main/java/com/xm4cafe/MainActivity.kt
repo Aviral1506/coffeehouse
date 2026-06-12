@@ -1,5 +1,5 @@
-// app/src/main/java/com/xm4cafe/MainActivity.kt
-package com.xm4cafe
+// app/src/main/java/com/coffeehouse/MainActivity.kt
+package com.coffeehouse
 
 import android.Manifest
 import android.content.Intent
@@ -23,7 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
-import com.xm4cafe.ui.MainScreen
+import com.coffeehouse.ui.MainScreen
 
 /**
  * Single Activity host.

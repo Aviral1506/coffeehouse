@@ -1,5 +1,5 @@
-// app/src/main/java/com/xm4cafe/ui/StatusBar.kt
-package com.xm4cafe.ui
+// app/src/main/java/com/coffeehouse/ui/StatusBar.kt
+package com.coffeehouse.ui
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.xm4cafe.viewmodel.UiState
+import com.coffeehouse.viewmodel.UiState
 
 /**
  * Top-of-screen status row (spec §8.1, §8.3).

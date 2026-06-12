@@ -1,5 +1,5 @@
-// app/src/main/java/com/xm4cafe/BootReceiver.kt
-package com.xm4cafe
+// app/src/main/java/com/coffeehouse/BootReceiver.kt
+package com.coffeehouse
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -8,7 +8,7 @@ import android.util.Log
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.xm4cafe.data.BootStartWorker
+import com.coffeehouse.data.BootStartWorker
 import java.util.concurrent.TimeUnit
 
 /**
@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action != Intent.ACTION_BOOT_COMPLETED) return
-        Log.d("XM4Cafe", "Boot received — scheduling service start via WorkManager")
+        Log.d("Coffeehouse", "Boot received — scheduling service start via WorkManager")
         val request = OneTimeWorkRequestBuilder<BootStartWorker>()
             .setInitialDelay(3, TimeUnit.SECONDS)
             .build()

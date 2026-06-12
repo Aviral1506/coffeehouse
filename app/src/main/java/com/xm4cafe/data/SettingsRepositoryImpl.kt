@@ -1,5 +1,5 @@
-// app/src/main/java/com/xm4cafe/data/SettingsRepositoryImpl.kt
-package com.xm4cafe.data
+// app/src/main/java/com/coffeehouse/data/SettingsRepositoryImpl.kt
+package com.coffeehouse.data
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -10,9 +10,9 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.xm4cafe.model.CafeSettings
-import com.xm4cafe.model.CustomPreset
-import com.xm4cafe.model.Preset
+import com.coffeehouse.model.CafeSettings
+import com.coffeehouse.model.CustomPreset
+import com.coffeehouse.model.Preset
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first

@@ -1,12 +1,12 @@
-// app/src/main/java/com/xm4cafe/service/AudioEffectsManager.kt
-package com.xm4cafe.service
+// app/src/main/java/com/coffeehouse/service/AudioEffectsManager.kt
+package com.coffeehouse.service
 
 import android.media.audiofx.BassBoost
 import android.media.audiofx.Equalizer
 import android.media.audiofx.PresetReverb
 import android.media.audiofx.Virtualizer
 import android.util.Log
-import com.xm4cafe.model.CafeSettings
+import com.coffeehouse.model.CafeSettings
 
 /**
  * Owns the four AudioEffect objects on session 0 (global mix).
@@ -32,34 +32,34 @@ class AudioEffectsManager {
     fun initEffects(settings: CafeSettings) {
         try {
             equalizer = Equalizer(0, 0).also {
-                Log.d("XM4Cafe", "Equalizer init OK, bands=${it.numberOfBands}")
+                Log.d("Coffeehouse", "Equalizer init OK, bands=${it.numberOfBands}")
             }
         } catch (e: RuntimeException) {
-            Log.e("XM4Cafe", "Equalizer init failed: ${e.message}")
+            Log.e("Coffeehouse", "Equalizer init failed: ${e.message}")
         }
 
         try {
             bassBoost = BassBoost(0, 0).also {
-                Log.d("XM4Cafe", "BassBoost init OK")
+                Log.d("Coffeehouse", "BassBoost init OK")
             }
         } catch (e: RuntimeException) {
-            Log.e("XM4Cafe", "BassBoost init failed: ${e.message}")
+            Log.e("Coffeehouse", "BassBoost init failed: ${e.message}")
         }
 
         try {
             presetReverb = PresetReverb(0, 0).also {
-                Log.d("XM4Cafe", "PresetReverb init OK")
+                Log.d("Coffeehouse", "PresetReverb init OK")
             }
         } catch (e: RuntimeException) {
-            Log.e("XM4Cafe", "PresetReverb init failed: ${e.message}")
+            Log.e("Coffeehouse", "PresetReverb init failed: ${e.message}")
         }
 
         try {
             virtualizer = Virtualizer(0, 0).also {
-                Log.d("XM4Cafe", "Virtualizer init OK")
+                Log.d("Coffeehouse", "Virtualizer init OK")
             }
         } catch (e: RuntimeException) {
-            Log.e("XM4Cafe", "Virtualizer init failed: ${e.message}")
+            Log.e("Coffeehouse", "Virtualizer init failed: ${e.message}")
         }
 
         applySettings(settings)
@@ -85,7 +85,7 @@ class AudioEffectsManager {
                 }
             }
         } catch (e: RuntimeException) {
-            Log.e("XM4Cafe", "Equalizer apply failed: ${e.message}")
+            Log.e("Coffeehouse", "Equalizer apply failed: ${e.message}")
         }
 
         // ---- BassBoost ----
@@ -97,7 +97,7 @@ class AudioEffectsManager {
                 }
             }
         } catch (e: RuntimeException) {
-            Log.e("XM4Cafe", "BassBoost apply failed: ${e.message}")
+            Log.e("Coffeehouse", "BassBoost apply failed: ${e.message}")
         }
 
         // ---- PresetReverb ----
@@ -109,7 +109,7 @@ class AudioEffectsManager {
                 }
             }
         } catch (e: RuntimeException) {
-            Log.e("XM4Cafe", "PresetReverb apply failed: ${e.message}")
+            Log.e("Coffeehouse", "PresetReverb apply failed: ${e.message}")
         }
 
         // ---- Virtualizer ----
@@ -121,7 +121,7 @@ class AudioEffectsManager {
                 }
             }
         } catch (e: RuntimeException) {
-            Log.e("XM4Cafe", "Virtualizer apply failed: ${e.message}")
+            Log.e("Coffeehouse", "Virtualizer apply failed: ${e.message}")
         }
     }
 
@@ -132,22 +132,22 @@ class AudioEffectsManager {
      */
     fun releaseAll() {
         try { equalizer?.release() } catch (e: Exception) {
-            Log.e("XM4Cafe", "Equalizer release error: ${e.message}")
+            Log.e("Coffeehouse", "Equalizer release error: ${e.message}")
         }
         equalizer = null
 
         try { bassBoost?.release() } catch (e: Exception) {
-            Log.e("XM4Cafe", "BassBoost release error: ${e.message}")
+            Log.e("Coffeehouse", "BassBoost release error: ${e.message}")
         }
         bassBoost = null
 
         try { presetReverb?.release() } catch (e: Exception) {
-            Log.e("XM4Cafe", "PresetReverb release error: ${e.message}")
+            Log.e("Coffeehouse", "PresetReverb release error: ${e.message}")
         }
         presetReverb = null
 
         try { virtualizer?.release() } catch (e: Exception) {
-            Log.e("XM4Cafe", "Virtualizer release error: ${e.message}")
+            Log.e("Coffeehouse", "Virtualizer release error: ${e.message}")
         }
         virtualizer = null
     }

@@ -1,5 +1,5 @@
-// app/src/main/java/com/xm4cafe/model/CafeSettings.kt
-package com.xm4cafe.model
+// app/src/main/java/com/coffeehouse/model/CafeSettings.kt
+package com.coffeehouse.model
 
 /**
  * All DSP parameters in one serialisable data class (spec §5.1).

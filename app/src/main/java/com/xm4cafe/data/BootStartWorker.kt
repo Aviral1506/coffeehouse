@@ -1,5 +1,5 @@
-// app/src/main/java/com/xm4cafe/data/BootStartWorker.kt
-package com.xm4cafe.data
+// app/src/main/java/com/coffeehouse/data/BootStartWorker.kt
+package com.coffeehouse.data
 
 import android.content.Context
 import android.content.Intent
@@ -7,7 +7,7 @@ import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.xm4cafe.service.AudioEffectService
+import com.coffeehouse.service.AudioEffectService
 
 /**
  * WorkManager Worker that promotes a post-boot context into a valid
@@ -31,10 +31,10 @@ class BootStartWorker(
                 appContext,
                 Intent(appContext, AudioEffectService::class.java)
             )
-            Log.d("XM4Cafe", "BootStartWorker: startForegroundService dispatched")
+            Log.d("Coffeehouse", "BootStartWorker: startForegroundService dispatched")
             Result.success()
         } catch (e: Exception) {
-            Log.e("XM4Cafe", "BootStartWorker: failed to start service: ${e.message}")
+            Log.e("Coffeehouse", "BootStartWorker: failed to start service: ${e.message}")
             Result.failure()
         }
     }

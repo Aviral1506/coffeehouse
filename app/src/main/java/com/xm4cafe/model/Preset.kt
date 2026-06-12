@@ -1,5 +1,5 @@
-// app/src/main/java/com/xm4cafe/model/Preset.kt
-package com.xm4cafe.model
+// app/src/main/java/com/coffeehouse/model/Preset.kt
+package com.coffeehouse.model
 
 import android.media.audiofx.PresetReverb
 

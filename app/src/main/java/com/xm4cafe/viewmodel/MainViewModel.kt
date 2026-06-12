@@ -1,5 +1,5 @@
-// app/src/main/java/com/xm4cafe/viewmodel/MainViewModel.kt
-package com.xm4cafe.viewmodel
+// app/src/main/java/com/coffeehouse/viewmodel/MainViewModel.kt
+package com.coffeehouse.viewmodel
 
 import android.app.Application
 import android.bluetooth.BluetoothManager
@@ -13,10 +13,10 @@ import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.xm4cafe.data.SettingsRepositoryImpl
-import com.xm4cafe.model.CafeSettings
-import com.xm4cafe.model.Preset
-import com.xm4cafe.service.AudioEffectService
+import com.coffeehouse.data.SettingsRepositoryImpl
+import com.coffeehouse.model.CafeSettings
+import com.coffeehouse.model.Preset
+import com.coffeehouse.service.AudioEffectService
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -307,7 +307,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 )
             }
         } catch (e: SecurityException) {
-            Log.w("XM4Cafe", "Bluetooth permission denied: ${e.message}")
+            Log.w("Coffeehouse", "Bluetooth permission denied: ${e.message}")
             _uiState.update { it.copy(xm4Connected = false, xm4DeviceName = "") }
         }
     }

@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.xm4cafe"
+    namespace = "com.coffeehouse"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.xm4cafe"
+        applicationId = "com.coffeehouse"
         minSdk = 31
         targetSdk = 36
         versionCode = 1

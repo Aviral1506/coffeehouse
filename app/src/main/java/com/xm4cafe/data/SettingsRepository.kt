@@ -1,8 +1,8 @@
-// app/src/main/java/com/xm4cafe/data/SettingsRepository.kt
-package com.xm4cafe.data
+// app/src/main/java/com/coffeehouse/data/SettingsRepository.kt
+package com.coffeehouse.data
 
-import com.xm4cafe.model.CafeSettings
-import com.xm4cafe.model.Preset
+import com.coffeehouse.model.CafeSettings
+import com.coffeehouse.model.Preset
 import kotlinx.coroutines.flow.Flow
 
 /**

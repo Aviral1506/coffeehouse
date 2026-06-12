@@ -27,5 +27,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "XM4CafeMode"
+rootProject.name = "Coffeehouse"
 include(":app")

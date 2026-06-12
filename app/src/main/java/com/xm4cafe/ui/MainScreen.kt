@@ -1,5 +1,5 @@
-// app/src/main/java/com/xm4cafe/ui/MainScreen.kt
-package com.xm4cafe.ui
+// app/src/main/java/com/coffeehouse/ui/MainScreen.kt
+package com.coffeehouse.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
@@ -35,9 +35,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.xm4cafe.model.CafeSettings
-import com.xm4cafe.model.Preset
-import com.xm4cafe.viewmodel.MainViewModel
+import com.coffeehouse.model.CafeSettings
+import com.coffeehouse.model.Preset
+import com.coffeehouse.viewmodel.MainViewModel
 
 /**
  * Compose root for the single-screen UI (spec §8).
@@ -77,12 +77,12 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
         Spacer(Modifier.height(16.dp))
 
         Text(
-            text = "XM4 Cafe Mode",
+            text = "Coffeehouse",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
         )
         Text(
-            text  = "Sony WH-1000XM4",
+            text  = "Audio Enhancer",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

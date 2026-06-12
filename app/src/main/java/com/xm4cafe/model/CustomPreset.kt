@@ -1,5 +1,5 @@
-// app/src/main/java/com/xm4cafe/model/CustomPreset.kt
-package com.xm4cafe.model
+// app/src/main/java/com/coffeehouse/model/CustomPreset.kt
+package com.coffeehouse.model
 
 /**
  * A user-named snapshot of [CafeSettings] (spec Phase 5, §1).

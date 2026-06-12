@@ -1,5 +1,5 @@
-// app/src/main/java/com/xm4cafe/ui/SliderPanel.kt
-package com.xm4cafe.ui
+// app/src/main/java/com/coffeehouse/ui/SliderPanel.kt
+package com.coffeehouse.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -16,7 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.xm4cafe.model.Preset
+import com.coffeehouse.model.Preset
 
 /**
  * Fine-tune slider panel (spec §8.2).

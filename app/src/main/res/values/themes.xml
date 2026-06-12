@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.XM4Cafe" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.Coffeehouse" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- Material 3 Dark Theme for OLED - Black background with purple accents -->
         <item name="android:windowOptOutEdgeToEdgeEnforcement">false</item>
+        <item name="colorPrimary">#B388FF</item>
+        <item name="colorSecondary">#7C4DFF</item>
+        <item name="colorTertiary">#B388FF</item>
+        <item name="android:colorBackground">#000000</item>
+        <item name="colorSurfaceVariant">#1a1a1a</item>
     </style>
 </resources>
