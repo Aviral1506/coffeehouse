@@ -69,7 +69,7 @@ fun SliderPanel(
             LabelledSlider(
                 label = "Air",
                 value = air,
-                valueRange = -600f..0f,
+                valueRange = -1400f..0f,
                 onValueChange = onAirChange,
                 displayValue = "%.1f dB".format(air / 100f),
             )

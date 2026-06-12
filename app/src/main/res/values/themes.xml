@@ -1,26 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.Coffeehouse" parent="Theme.Material3.Dark.NoActionBar">
-        <!-- Material 3 Dark Theme for OLED - Pure black background with purple accents -->
+        <!-- Material 3 dark theme for OLED: pure black with violet accents. -->
         <item name="android:windowOptOutEdgeToEdgeEnforcement">false</item>
         
-        <!-- Force dark background -->
+        <!-- Window defaults. Compose supplies the app color scheme. -->
         <item name="android:colorBackground">#000000</item>
         <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:navigationBarColor">#000000</item>
+        <item name="android:statusBarColor">#000000</item>
         
-        <!-- Primary and accent colors - purple theme -->
-        <item name="colorPrimary">#B388FF</item>
-        <item name="colorSecondary">#7C4DFF</item>
-        <item name="colorTertiary">#B388FF</item>
+        <!-- Violet accent colors that hold contrast on pure black. -->
+        <item name="colorPrimary">#A78BFA</item>
+        <item name="colorOnPrimary">#14002E</item>
+        <item name="colorPrimaryContainer">#4C1D95</item>
+        <item name="colorOnPrimaryContainer">#F1E8FF</item>
+        <item name="colorSecondary">#C4B5FD</item>
+        <item name="colorOnSecondary">#1F123A</item>
+        <item name="colorTertiary">#F0ABFC</item>
         
         <!-- Dark surfaces -->
-        <item name="colorSurface">#0a0a0a</item>
-        <item name="colorSurfaceVariant">#1a1a1a</item>
+        <item name="colorSurface">#000000</item>
+        <item name="colorSurfaceVariant">#17121F</item>
         
         <!-- Text and outline colors for dark theme -->
-        <item name="colorOnBackground">#FFFFFF</item>
-        <item name="colorOnSurface">#FFFFFF</item>
-        <item name="colorOnSurfaceVariant">#B0B0B0</item>
-        <item name="colorOutline">#424242</item>
+        <item name="colorOnBackground">#F8F7FF</item>
+        <item name="colorOnSurface">#F8F7FF</item>
+        <item name="colorOnSurfaceVariant">#C9C2D8</item>
+        <item name="colorOutline">#5E536F</item>
     </style>
 </resources>

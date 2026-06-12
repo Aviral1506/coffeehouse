@@ -16,6 +16,7 @@ import androidx.lifecycle.viewModelScope
 import com.coffeehouse.data.SettingsRepositoryImpl
 import com.coffeehouse.model.CafeSettings
 import com.coffeehouse.model.Preset
+import com.coffeehouse.model.buildCafeEqBands
 import com.coffeehouse.service.AudioEffectService
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
@@ -63,9 +64,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     // ---- Per-slider state (debounced as a group before hitting the service) ----
     private val _roomSize = MutableStateFlow(67f)
-    private val _width    = MutableStateFlow(700f)
-    private val _air      = MutableStateFlow(-250f)
-    private val _warmth   = MutableStateFlow(150f)
+    private val _width    = MutableStateFlow(820f)
+    private val _air      = MutableStateFlow(-950f)
+    private val _warmth   = MutableStateFlow(260f)
     val roomSize: StateFlow<Float> = _roomSize.asStateFlow()
     val width:    StateFlow<Float> = _width.asStateFlow()
     val air:      StateFlow<Float> = _air.asStateFlow()
@@ -256,9 +257,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             else            -> PresetReverb.PRESET_LARGEROOM.toShort()
         }
         val numBands = SettingsRepositoryImpl.DEFAULT_NUM_BANDS
-        val eqBands  = List(numBands) { i ->
-            if (i >= numBands - 2) air.toInt() else 0
-        }
+        val eqBands = buildCafeEqBands(
+            numBands = numBands,
+            airCut = air.toInt(),
+            bodyBoost = (warmth * 0.7f).toInt().coerceIn(0, 420),
+            lowCut = -180,
+        )
         return CafeSettings(
             reverbPreset        = reverbPreset,
             reverbEnabled       = true,

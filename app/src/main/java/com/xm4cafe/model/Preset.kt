@@ -18,11 +18,16 @@ enum class Preset {
         CAFE -> CafeSettings(
             reverbPreset        = PresetReverb.PRESET_LARGEROOM.toShort(),
             reverbEnabled       = true,
-            virtualizerStrength = 700.toShort(),
+            virtualizerStrength = 820.toShort(),
             virtualizerEnabled  = true,
-            bassBoostStrength   = 150.toShort(),
+            bassBoostStrength   = 260.toShort(),
             bassBoostEnabled    = true,
-            eqBands             = buildEqBands(numBands, topCut = -250),
+            eqBands             = buildCafeEqBands(
+                numBands = numBands,
+                airCut = -950,
+                bodyBoost = 180,
+                lowCut = -180,
+            ),
             eqEnabled           = true,
         )
         LIVING_ROOM -> CafeSettings(
@@ -32,7 +37,12 @@ enum class Preset {
             virtualizerEnabled  = true,
             bassBoostStrength   = 100.toShort(),
             bassBoostEnabled    = true,
-            eqBands             = buildEqBands(numBands, topCut = -150),
+            eqBands             = buildCafeEqBands(
+                numBands = numBands,
+                airCut = -450,
+                bodyBoost = 90,
+                lowCut = -80,
+            ),
             eqEnabled           = true,
         )
         MY_ROOM -> CafeSettings(
@@ -42,7 +52,12 @@ enum class Preset {
             virtualizerEnabled  = true,
             bassBoostStrength   = 50.toShort(),
             bassBoostEnabled    = true,
-            eqBands             = buildEqBands(numBands, topCut = -75),
+            eqBands             = buildCafeEqBands(
+                numBands = numBands,
+                airCut = -200,
+                bodyBoost = 40,
+                lowCut = 0,
+            ),
             eqEnabled           = true,
         )
         OFF -> CafeSettings(
@@ -59,17 +74,29 @@ enum class Preset {
 }
 
 /**
- * Build an EQ band list of length [numBands] where all values are 0 except
- * the top two bands (highest frequencies), which are cut to [topCut] millibels.
+ * Build a cafe/small-speaker voicing curve.
  *
- *  - numBands == 0  -> emptyList()
- *  - numBands == 1  -> [topCut]
- *  - numBands >= 2  -> [0, 0, ..., topCut, topCut]
+ * Android EQ bands are ordered low to high, but the exact centre frequencies
+ * vary by device. This normalized shape keeps the intent stable:
+ * contain sub-bass, warm the low mids, soften upper mids, and roll off air.
  */
-private fun buildEqBands(numBands: Int, topCut: Int): List<Int> {
+fun buildCafeEqBands(
+    numBands: Int,
+    airCut: Int,
+    bodyBoost: Int,
+    lowCut: Int,
+): List<Int> {
     if (numBands <= 0) return emptyList()
-    if (numBands == 1) return listOf(topCut)
+    if (numBands == 1) return listOf(airCut)
+
     return List(numBands) { index ->
-        if (index >= numBands - 2) topCut else 0
+        val position = index.toFloat() / (numBands - 1).toFloat()
+        when {
+            position < 0.18f -> lowCut
+            position < 0.45f -> bodyBoost
+            position < 0.65f -> bodyBoost / 2
+            position < 0.82f -> (airCut * 0.65f).toInt()
+            else             -> airCut
+        }
     }
 }

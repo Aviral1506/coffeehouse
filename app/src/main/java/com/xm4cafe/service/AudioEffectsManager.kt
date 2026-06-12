@@ -3,6 +3,7 @@ package com.coffeehouse.service
 
 import android.media.audiofx.BassBoost
 import android.media.audiofx.Equalizer
+import android.media.audiofx.EnvironmentalReverb
 import android.media.audiofx.PresetReverb
 import android.media.audiofx.Virtualizer
 import android.util.Log
@@ -20,6 +21,7 @@ class AudioEffectsManager {
 
     private var equalizer: Equalizer? = null
     private var bassBoost: BassBoost? = null
+    private var environmentalReverb: EnvironmentalReverb? = null
     private var presetReverb: PresetReverb? = null
     private var virtualizer: Virtualizer? = null
 
@@ -44,6 +46,14 @@ class AudioEffectsManager {
             }
         } catch (e: RuntimeException) {
             Log.e("Coffeehouse", "BassBoost init failed: ${e.message}")
+        }
+
+        try {
+            environmentalReverb = EnvironmentalReverb(0, 0).also {
+                Log.d("Coffeehouse", "EnvironmentalReverb init OK")
+            }
+        } catch (e: RuntimeException) {
+            Log.e("Coffeehouse", "EnvironmentalReverb init failed: ${e.message}")
         }
 
         try {
@@ -79,8 +89,12 @@ class AudioEffectsManager {
                 if (settings.eqEnabled) {
                     val bands = eq.numberOfBands.toInt()
                     val safeBands = minOf(bands, settings.eqBands.size)
+                    val levelRange = eq.bandLevelRange
+                    val minLevel = levelRange.getOrNull(0)?.toInt() ?: -1500
+                    val maxLevel = levelRange.getOrNull(1)?.toInt() ?: 1500
                     for (i in 0 until safeBands) {
-                        eq.setBandLevel(i.toShort(), settings.eqBands[i].toShort())
+                        val level = settings.eqBands[i].coerceIn(minLevel, maxLevel)
+                        eq.setBandLevel(i.toShort(), level.toShort())
                     }
                 }
             }
@@ -100,16 +114,24 @@ class AudioEffectsManager {
             Log.e("Coffeehouse", "BassBoost apply failed: ${e.message}")
         }
 
-        // ---- PresetReverb ----
+        // ---- Reverb ----
         try {
-            presetReverb?.let { pr ->
+            environmentalReverb?.let { er ->
+                er.enabled = settings.reverbEnabled
+                if (settings.reverbEnabled) {
+                    er.applyCafeProfile(settings.reverbPreset)
+                }
+            } ?: presetReverb?.let { pr ->
                 pr.enabled = settings.reverbEnabled
                 if (settings.reverbEnabled) {
                     pr.preset = settings.reverbPreset
                 }
             }
         } catch (e: RuntimeException) {
-            Log.e("Coffeehouse", "PresetReverb apply failed: ${e.message}")
+            Log.e("Coffeehouse", "Reverb apply failed: ${e.message}")
+        }
+        if (environmentalReverb != null) {
+            try { presetReverb?.enabled = false } catch (_: RuntimeException) {}
         }
 
         // ---- Virtualizer ----
@@ -141,6 +163,11 @@ class AudioEffectsManager {
         }
         bassBoost = null
 
+        try { environmentalReverb?.release() } catch (e: Exception) {
+            Log.e("Coffeehouse", "EnvironmentalReverb release error: ${e.message}")
+        }
+        environmentalReverb = null
+
         try { presetReverb?.release() } catch (e: Exception) {
             Log.e("Coffeehouse", "PresetReverb release error: ${e.message}")
         }
@@ -150,5 +177,46 @@ class AudioEffectsManager {
             Log.e("Coffeehouse", "Virtualizer release error: ${e.message}")
         }
         virtualizer = null
+    }
+
+    private fun EnvironmentalReverb.applyCafeProfile(reverbPreset: Short) {
+        when (reverbPreset) {
+            PresetReverb.PRESET_SMALLROOM.toShort() -> {
+                roomLevel = (-900).toShort()
+                roomHFLevel = (-2600).toShort()
+                decayTime = 900
+                decayHFRatio = 520.toShort()
+                reflectionsLevel = (-1400).toShort()
+                reflectionsDelay = 12
+                reverbLevel = (-900).toShort()
+                reverbDelay = 38
+                diffusion = 620.toShort()
+                density = 520.toShort()
+            }
+            PresetReverb.PRESET_MEDIUMROOM.toShort() -> {
+                roomLevel = (-1050).toShort()
+                roomHFLevel = (-3600).toShort()
+                decayTime = 1350
+                decayHFRatio = 580.toShort()
+                reflectionsLevel = (-1200).toShort()
+                reflectionsDelay = 22
+                reverbLevel = (-650).toShort()
+                reverbDelay = 58
+                diffusion = 720.toShort()
+                density = 620.toShort()
+            }
+            else -> {
+                roomLevel = (-1150).toShort()
+                roomHFLevel = (-4800).toShort()
+                decayTime = 1900
+                decayHFRatio = 640.toShort()
+                reflectionsLevel = (-1000).toShort()
+                reflectionsDelay = 34
+                reverbLevel = (-420).toShort()
+                reverbDelay = 82
+                diffusion = 840.toShort()
+                density = 760.toShort()
+            }
+        }
     }
 }
