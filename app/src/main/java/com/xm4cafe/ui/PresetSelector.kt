@@ -17,7 +17,8 @@ import androidx.compose.ui.unit.dp
 import com.coffeehouse.model.Preset
 
 /**
- * Four-button segmented control: Cafe / Living Room / My Room / Off (spec §8.1).
+ * Three-button segmented control: Cafe / Living Room / My Room (spec §8.1).
+ * OFF is controlled via the master Effects toggle at the top.
  *
  * Selected preset uses filled Button, others use OutlinedButton; all share
  * a zero-corner-radius shape so they read as a single horizontal segment.
@@ -31,12 +32,11 @@ fun PresetSelector(
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
-    val presets = listOf(Preset.CAFE, Preset.LIVING_ROOM, Preset.MY_ROOM, Preset.OFF)
+    val presets = listOf(Preset.CAFE, Preset.LIVING_ROOM, Preset.MY_ROOM)
     val labels  = mapOf(
         Preset.CAFE        to "Cafe",
         Preset.LIVING_ROOM to "Living Room",
         Preset.MY_ROOM     to "My Room",
-        Preset.OFF         to "Off",
     )
 
     Row(modifier = modifier.fillMaxWidth()) {
