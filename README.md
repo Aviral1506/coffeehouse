@@ -2,7 +2,7 @@
 
 Coffeehouse brings Sony's "Background Music" listening mode to the WH-1000XM4.
 
-The app applies Android audio effects to simulate the spacious, speaker-like presentation available in newer Sony headphone models.
+The app applies Android audio effects to simulate the spacious, speaker-like presentation available in the WH-1000XM6 Sony headphone model.
 
 ## Features
 
@@ -12,15 +12,6 @@ The app applies Android audio effects to simulate the spacious, speaker-like pre
 - Automatic startup after reboot
 - Persistent settings using DataStore
 - Modern Jetpack Compose UI
-
-## Tech Stack
-
-- Kotlin
-- Jetpack Compose
-- Android SDK 36
-- WorkManager
-- DataStore
-- Coroutines
 
 ## Requirements
 
