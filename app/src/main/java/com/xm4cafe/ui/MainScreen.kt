@@ -1,10 +1,9 @@
 // app/src/main/java/com/coffeehouse/ui/MainScreen.kt
 package com.coffeehouse.ui
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,13 +14,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -45,12 +47,11 @@ import com.coffeehouse.viewmodel.MainViewModel
  *
  * Layout, top to bottom:
  *   1. StatusBar              — XM4 + service state
- *   2. Title block            — "XM4 Cafe Mode" / "Sony WH-1000XM4"
- *   3. Master Effects switch
- *   4. PresetSelector         — Cafe / Living Room / My Room / Off
+ *   2. Title block            — Coffeehouse title + master effects switch
+ *   3. PresetSelector         — Cafe / Living Room / My Room
  *   5. Fine Tune SliderPanel  — collapses when OFF is selected
  *   6. Save-as-Custom button  — only when a non-OFF preset is active (Phase 5)
- *   7. Custom preset chips    — LazyRow, long-press to delete (Phase 5)
+ *   7. Custom preset list     — tap to load, menu to delete with confirmation
  *   8. Save dialog            — modal AlertDialog, name input (Phase 5)
  *
  * Edge-to-edge insets handled at the outermost Column via safeDrawingPadding
@@ -78,35 +79,30 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
 
         Spacer(Modifier.height(16.dp))
 
-        Text(
-            text = "Coffeehouse",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-        )
-        Text(
-            text  = "Audio Enhancer",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-
-        Spacer(Modifier.height(24.dp))
-
         Row(
-            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top,
         ) {
-            Text(
-                text  = "Effects",
-                style = MaterialTheme.typography.titleMedium,
-            )
+            Column {
+                Text(
+                    text = "Coffeehouse",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    text  = "Audio Enhancer",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             Switch(
                 checked = uiState.effectsEnabled,
                 onCheckedChange = { viewModel.toggleEffects(it) },
             )
         }
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(24.dp))
 
         Text(
             text  = "Preset",
@@ -152,9 +148,7 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
             }
         }
 
-        // Custom preset chips — header + horizontally-scrolling row, only
-        // rendered when at least one custom preset exists so the empty state
-        // takes no vertical space.
+        // Custom preset list — tap selects, menu deletes with confirmation.
         if (customPresets.isNotEmpty()) {
             Spacer(Modifier.height(16.dp))
             Text(
@@ -163,7 +157,7 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Spacer(Modifier.height(8.dp))
-            CustomPresetRow(
+            CustomPresetList(
                 presets  = customPresets,
                 onSelect = { viewModel.selectCustomPreset(it) },
                 onDelete = { viewModel.deleteCustomPreset(it) },
@@ -180,44 +174,104 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
     }
 }
 
-/**
- * Horizontally-scrolling row of custom preset chips. Tap selects, long-press
- * deletes (no confirmation — the spec deliberately keeps this terse to match
- * the chip metaphor; mis-deletes can be re-saved easily).
- *
- * combinedClickable is in androidx.compose.foundation and is currently
- * marked @ExperimentalFoundationApi — opted in at the composable level.
- */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun CustomPresetRow(
+private fun CustomPresetList(
     presets: Map<String, CafeSettings>,
     onSelect: (String) -> Unit,
     onDelete: (String) -> Unit,
 ) {
-    val names = presets.keys.toList()
-    LazyRow(
+    val names = presets.keys.sorted()
+    var pendingDelete by remember { mutableStateOf<String?>(null) }
+
+    Surface(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        shape = RoundedCornerShape(8.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
     ) {
-        items(names) { name ->
-            Box(
-                modifier = Modifier
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.outline,
-                        shape = RoundedCornerShape(8.dp),
-                    )
-                    .combinedClickable(
-                        onClick = { onSelect(name) },
-                        onLongClick = { onDelete(name) },
-                    )
-                    .padding(horizontal = 12.dp, vertical = 6.dp),
-                contentAlignment = Alignment.Center,
+        Column {
+            names.forEachIndexed { index, name ->
+                CustomPresetListItem(
+                    name = name,
+                    onSelect = { onSelect(name) },
+                    onDelete = { pendingDelete = name },
+                )
+                if (index != names.lastIndex) {
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                }
+            }
+        }
+    }
+
+    pendingDelete?.let { name ->
+        AlertDialog(
+            onDismissRequest = { pendingDelete = null },
+            title = { Text("Delete Preset?") },
+            text = { Text("Delete \"$name\" from your custom presets?") },
+            confirmButton = {
+                TextButton(
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error,
+                    ),
+                    onClick = {
+                        pendingDelete = null
+                        onDelete(name)
+                    },
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { pendingDelete = null }) {
+                    Text("Cancel")
+                }
+            },
+        )
+    }
+}
+
+@Composable
+private fun CustomPresetListItem(
+    name: String,
+    onSelect: () -> Unit,
+    onDelete: () -> Unit,
+) {
+    var menuExpanded by remember { mutableStateOf(false) }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onSelect)
+            .padding(start = 14.dp, top = 10.dp, bottom = 10.dp, end = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = name,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
+            )
+            Text(
+                text = "Custom preset",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Box {
+            TextButton(onClick = { menuExpanded = true }) {
+                Text("...")
+            }
+            DropdownMenu(
+                expanded = menuExpanded,
+                onDismissRequest = { menuExpanded = false },
             ) {
-                Text(
-                    text = name,
-                    style = MaterialTheme.typography.labelMedium,
+                DropdownMenuItem(
+                    text = { Text("Delete") },
+                    onClick = {
+                        menuExpanded = false
+                        onDelete()
+                    },
                 )
             }
         }
